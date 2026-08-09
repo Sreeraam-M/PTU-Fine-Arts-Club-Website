@@ -5,8 +5,37 @@ import { RxArrowRight } from 'react-icons/rx'
 import { Container } from '../../ui/Layout'
 import { heroArtwork } from '../../../data/homeCurated'
 
+/**
+ * Resolves local public assets correctly for both:
+ * - Local development
+ * - GitHub Pages
+ * - Future CMS / CDN URLs
+ *
+ * Local asset:
+ *   /hero-artwork.png
+ *
+ * GitHub Pages:
+ *   /PTU-Fine-Arts-Club-Website/hero-artwork.png
+ *
+ * External CMS/CDN URL:
+ *   https://...
+ */
+const resolveAssetUrl = (src) => {
+  if (!src) return ''
+
+  // External assets from a future CMS/CDN
+  if (/^https?:\/\//i.test(src)) {
+    return src
+  }
+
+  // Local public assets
+  return `${import.meta.env.BASE_URL}${src.replace(/^\/+/, '')}`
+}
+
 export function Hero() {
   const reduce = useReducedMotion()
+
+  const heroImageSrc = resolveAssetUrl(heroArtwork.src)
 
   const rise = (delay = 0) => ({
     initial: reduce ? false : { opacity: 0, y: 20 },
@@ -29,10 +58,10 @@ export function Hero() {
   })
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <>
       {/* Hero artwork */}
       <motion.img
-        src={heroArtwork.src}
+        src={heroImageSrc}
         alt={heroArtwork.alt}
         initial={
           reduce
@@ -117,6 +146,6 @@ export function Hero() {
           </motion.div>
         </div>
       </Container>
-    </section>
+    </>
   )
 }
