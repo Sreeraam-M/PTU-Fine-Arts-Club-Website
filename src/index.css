@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- Color tokens, sourced from the Fine Arts Club style guide ---- */
+  --color-rich-black: #111111;
+  --color-spring-wood: #f8f5f0;
+  --color-nutmeg: #7a2e2e;
+  --color-nutmeg-light: #9a4444;
+  --color-copper: #c86b3c;
+  --color-copper-light: #d68a63;
+  --color-shadow: #7a6a45;
+  --color-shadow-light: #9a8a63;
+  --color-olive: #6b7b3d;
+
+  --color-neutral-50: #f7f7f6;
+  --color-neutral-100: #e9e8e6;
+  --color-neutral-200: #d3d1cd;
+  --color-neutral-300: #b0aca3;
+  --color-neutral-400: #8a857a;
+  --color-neutral-500: #6b665c;
+  --color-neutral-600: #504c44;
+  --color-neutral-700: #38352f;
+  --color-neutral-800: #24221e;
+  --color-neutral-900: #151412;
+
+  /* Semantic aliases -- reference these in components, not raw colors */
+  --color-bg: var(--color-spring-wood);
+  --color-bg-inverse: var(--color-rich-black);
+  --color-surface: #ffffff;
+  --color-ink: var(--color-rich-black);
+  --color-ink-muted: var(--color-neutral-600);
+  --color-ink-inverse: var(--color-spring-wood);
+  --color-ink-inverse-muted: var(--color-neutral-300);
+  --color-border: var(--color-neutral-200);
+  --color-border-inverse: var(--color-neutral-700);
+  --color-accent: var(--color-nutmeg);
+  --color-accent-soft: var(--color-copper);
+  --color-accent-tertiary: var(--color-shadow);
+  --color-danger: #b91c1c;
+
+  /* ---- Type tokens ---- */
+  --font-heading: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Radius: boxy, "edgy card" style per style guide ---- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 9999px;
+
+  /* ---- Motion tokens (TRD §9.8 Animation Tokens) ---- */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-hover: 200ms;
+  --duration-state: 300ms;
+  --duration-menu: 250ms;
+  --duration-dropdown: 150ms;
+  --duration-reveal: 600ms;
+  --duration-zoom: 500ms;
+  --duration-overlay: 300ms;
+
+  /* ---- Container ---- */
+  --container-max: 1320px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--color-nutmeg);
+    color: var(--color-spring-wood);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-copper);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .container-editorial {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3rem);
+  }
+
+  .container-poster {
+    padding-inline: clamp(0.5rem, 1vw, 0.75rem);
+  }
+}

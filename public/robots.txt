@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fineartsclub.ptu.edu.in/sitemap.xml
