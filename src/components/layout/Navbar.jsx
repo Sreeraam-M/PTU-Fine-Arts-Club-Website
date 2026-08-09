@@ -1,29 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { RxChevronDown } from 'react-icons/rx';
-import { Button } from '../ui/Button';
-import { primaryNav, workDropdown } from '../../data/navigation';
+import React, { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import { RxChevronDown } from 'react-icons/rx'
+import { Button } from '../ui/Button'
+import { primaryNav, workDropdown } from '../../data/navigation'
 
-const EASE = [0.22, 1, 0.36, 1];
+const EASE = [0.22, 1, 0.36, 1]
 
 const underlineBase =
-  'relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-[var(--duration-hover)] after:ease-[var(--ease-standard)]';
+  'relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-[var(--duration-hover)] after:ease-[var(--ease-standard)]'
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const { pathname } = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { pathname } = useLocation()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.75);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    const onScroll = () => {
+      // Switch to the solid glass state once the hero section
+      // has been passed.
+      setScrolled(window.scrollY > window.innerHeight * 0.75)
+    }
 
-  const workActive = workDropdown.some((item) => pathname.startsWith(item.to));
+    onScroll()
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [])
+
+  const workActive = workDropdown.some((item) =>
+    pathname.startsWith(item.to),
+  )
 
   const navLinkClasses = (isActive) =>
     `${underlineBase} px-1 py-2 text-sm transition-colors duration-[var(--duration-hover)] ${
@@ -34,33 +45,45 @@ export function Navbar() {
         : isActive
           ? 'text-ink-inverse font-semibold after:scale-x-100'
           : 'text-ink-inverse-muted hover:text-ink-inverse hover:after:scale-x-100'
-    }`;
+    }`
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-[var(--duration-state)] ease-[var(--ease-standard)] ${
+      className={`sticky top-0 z-50 border-b transition-all duration-500 ease-[var(--ease-standard)] ${
         scrolled
-          ? 'border-b border-border bg-bg/95 backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent'
+          ? 'border-border/70 bg-bg/90 shadow-sm backdrop-blur-xl'
+          : 'border-white/15 bg-white/8 backdrop-blur-xl'
       }`}
-    >      <div className="container-editorial flex h-16 items-center justify-between md:h-20">
+    >
+      <div className="container-editorial flex items-center justify-between py-3">
+        {/* Brand */}
         <NavLink
           to="/"
-          className={`font-heading text-xl font-bold tracking-tight transition-colors duration-[var(--duration-hover)] ${
+          className={`font-heading text-xl font-bold tracking-tight transition-colors duration-500 ${
             scrolled ? 'text-ink' : 'text-ink-inverse'
           }`}
         >
           Fine Arts Club
         </NavLink>
 
-        {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex">
+        {/* Desktop navigation */}
+        <nav
+          aria-label="Primary"
+          className="hidden items-center gap-6 lg:flex"
+        >
           {primaryNav.map((item) => (
-            <NavLink key={item.to} to={item.to} className={({ isActive }) => navLinkClasses(isActive)}>
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                navLinkClasses(isActive)
+              }
+            >
               {item.label}
             </NavLink>
           ))}
 
+          {/* Work dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setDropdownOpen(true)}
@@ -76,23 +99,39 @@ export function Navbar() {
                     ? 'text-ink-inverse font-semibold after:scale-x-100'
                     : 'text-ink-inverse-muted hover:text-ink-inverse hover:after:scale-x-100'
               }`}
-              onClick={() => setDropdownOpen((prev) => !prev)}
+              onClick={() =>
+                setDropdownOpen((prev) => !prev)
+              }
               aria-expanded={dropdownOpen}
               aria-haspopup="true"
             >
               Work
-              <motion.span aria-hidden="true" animate={{ rotate: dropdownOpen ? 180 : 0 }} transition={{ duration: 0.2, ease: EASE }}>
+
+              <motion.span
+                aria-hidden="true"
+                animate={{
+                  rotate: dropdownOpen ? 180 : 0,
+                }}
+                transition={{
+                  duration: 0.2,
+                  ease: EASE,
+                }}
+              >
                 <RxChevronDown />
               </motion.span>
             </button>
+
             <AnimatePresence>
               {dropdownOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.15, ease: EASE }}
-                  className="absolute left-0 top-full mt-1 min-w-40 border border-border bg-bg py-2 shadow-sm"
+                  transition={{
+                    duration: 0.15,
+                    ease: EASE,
+                  }}
+                  className="absolute left-0 top-full mt-1 min-w-40 border border-border bg-bg/95 py-2 shadow-sm backdrop-blur-xl"
                 >
                   {workDropdown.map((item) => (
                     <NavLink
@@ -109,22 +148,32 @@ export function Navbar() {
           </div>
         </nav>
 
+        {/* Desktop actions */}
         <div className="hidden items-center gap-3 lg:flex">
           <Button
             to="/membership"
             variant="secondary"
             size="sm"
             pill
-            className={scrolled ? '' : 'text-ink-inverse! border-white/70!'}
+            className={
+              scrolled
+                ? ''
+                : 'text-ink-inverse! border-white/70!'
+            }
           >
             Join
           </Button>
+
           <Button
             to="/about#contact"
             variant="primary"
             size="sm"
             pill
-            className={scrolled ? '' : 'bg-surface! text-ink! border-surface! hover:text-ink-inverse!'}
+            className={
+              scrolled
+                ? ''
+                : 'bg-surface! text-ink! border-surface! hover:text-ink-inverse!'
+            }
           >
             Contact
           </Button>
@@ -133,21 +182,43 @@ export function Navbar() {
         {/* Mobile toggle */}
         <button
           className="flex size-10 flex-col items-center justify-center gap-1.5 lg:hidden"
-          onClick={() => setMobileOpen((prev) => !prev)}
+          onClick={() =>
+            setMobileOpen((prev) => !prev)
+          }
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
         >
           <motion.span
-            className={`h-0.5 w-6 ${scrolled ? 'bg-ink' : 'bg-ink-inverse'}`}
-            animate={mobileOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
+            className={`h-0.5 w-6 transition-colors duration-500 ${
+              scrolled ? 'bg-ink' : 'bg-ink-inverse'
+            }`}
+            animate={
+              mobileOpen
+                ? { rotate: 45, y: 4 }
+                : { rotate: 0, y: 0 }
+            }
           />
+
           <motion.span
-            className={`h-0.5 w-6 ${scrolled ? 'bg-ink' : 'bg-ink-inverse'}`}
-            animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+            className={`h-0.5 w-6 transition-colors duration-500 ${
+              scrolled ? 'bg-ink' : 'bg-ink-inverse'
+            }`}
+            animate={
+              mobileOpen
+                ? { opacity: 0 }
+                : { opacity: 1 }
+            }
           />
+
           <motion.span
-            className={`h-0.5 w-6 ${scrolled ? 'bg-ink' : 'bg-ink-inverse'}`}
-            animate={mobileOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
+            className={`h-0.5 w-6 transition-colors duration-500 ${
+              scrolled ? 'bg-ink' : 'bg-ink-inverse'
+            }`}
+            animate={
+              mobileOpen
+                ? { rotate: -45, y: -4 }
+                : { rotate: 0, y: 0 }
+            }
           />
         </button>
       </div>
@@ -159,26 +230,49 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: EASE }}
+            transition={{
+              duration: 0.25,
+              ease: EASE,
+            }}
             aria-label="Mobile"
-            className="overflow-hidden border-t border-border bg-bg lg:hidden"
+            className={`overflow-hidden border-t backdrop-blur-xl lg:hidden ${
+              scrolled
+                ? 'border-border bg-bg/95'
+                : 'border-white/15 bg-black/20'
+            }`}
           >
             <div className="container-editorial flex flex-col gap-1 py-4">
-              {[...primaryNav, ...workDropdown].map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="rounded-[var(--radius-sm)] px-2 py-3 text-base text-ink-muted transition-colors duration-[var(--duration-hover)] hover:bg-neutral-100 hover:text-ink"
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+              {[...primaryNav, ...workDropdown].map(
+                (item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-[var(--radius-sm)] px-2 py-3 text-base text-ink-muted transition-colors duration-[var(--duration-hover)] hover:bg-neutral-100 hover:text-ink"
+                  >
+                    {item.label}
+                  </NavLink>
+                ),
+              )}
+
               <div className="mt-3 flex gap-3">
-                <Button to="/membership" variant="secondary" size="sm" pill className="flex-1">
+                <Button
+                  to="/membership"
+                  variant="secondary"
+                  size="sm"
+                  pill
+                  className="flex-1"
+                >
                   Join
                 </Button>
-                <Button to="/about#contact" variant="primary" size="sm" pill className="flex-1">
+
+                <Button
+                  to="/about#contact"
+                  variant="primary"
+                  size="sm"
+                  pill
+                  className="flex-1"
+                >
                   Contact
                 </Button>
               </div>
@@ -187,5 +281,5 @@ export function Navbar() {
         )}
       </AnimatePresence>
     </header>
-  );
+  )
 }
