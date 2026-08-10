@@ -6,29 +6,20 @@ import { Container } from '../../ui/Layout'
 import { heroArtwork } from '../../../data/homeCurated'
 
 /**
- * Resolves local public assets correctly for both:
+ * Resolves artwork assets correctly for:
  * - Local development
  * - GitHub Pages
  * - Future CMS / CDN URLs
- *
- * Local asset:
- *   /hero-artwork.png
- *
- * GitHub Pages:
- *   /PTU-Fine-Arts-Club-Website/hero-artwork.png
- *
- * External CMS/CDN URL:
- *   https://...
  */
 const resolveAssetUrl = (src) => {
   if (!src) return ''
 
-  // External assets from a future CMS/CDN
+  // External CMS / CDN asset
   if (/^https?:\/\//i.test(src)) {
     return src
   }
 
-  // Local public assets
+  // Local public asset
   return `${import.meta.env.BASE_URL}${src.replace(/^\/+/, '')}`
 }
 
@@ -58,7 +49,10 @@ export function Hero() {
   })
 
   return (
-    <>
+    <section
+      id="hero-section"
+      className="relative min-h-screen overflow-hidden"
+    >
       {/* Hero artwork */}
       <motion.img
         src={heroImageSrc}
@@ -91,7 +85,7 @@ export function Hero() {
             ease: 'easeOut',
           },
         }}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
       {/* Left-side readability overlay */}
@@ -106,14 +100,14 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_62%,rgba(21,15,11,0.18)_100%)]"
       />
 
-      {/* Bottom transition */}
+      {/* Bottom transition into Featured Artwork */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(to_top,var(--color-neutral-100),transparent)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_top,#000000,transparent)]"
       />
 
       {/* Hero content */}
-      <Container className="relative z-10 flex min-h-[inherit] w-full flex-col justify-center py-24">
+      <Container className="relative z-10 flex h-full w-full flex-col justify-center py-16 md:py-20">
         <div className="max-w-2xl">
           <motion.h1
             {...rise(0)}
@@ -122,7 +116,7 @@ export function Hero() {
             PTU FINE ARTS CLUB
           </motion.h1>
 
-          <motion.div {...rise(0.15)} className="mt-6">
+          <motion.div {...rise(0.15)} className="mt-5">
             <p className="text-base text-ink-inverse-muted md:text-lg">
               Created by artists.
             </p>
@@ -132,7 +126,7 @@ export function Hero() {
             </p>
           </motion.div>
 
-          <motion.div {...fade(0.3)} className="mt-8">
+          <motion.div {...fade(0.3)} className="mt-7">
             <Link
               to="/gallery"
               className="inline-flex items-center gap-2 font-medium text-ink-inverse underline-offset-4 transition-colors hover:underline focus-visible:outline-offset-4"
@@ -146,6 +140,6 @@ export function Hero() {
           </motion.div>
         </div>
       </Container>
-    </>
+    </section>
   )
 }

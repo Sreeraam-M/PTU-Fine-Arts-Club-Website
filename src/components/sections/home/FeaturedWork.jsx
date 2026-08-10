@@ -23,14 +23,11 @@ const resolveAssetUrl = (src) => {
 }
 
 /**
- * Featured Exhibition -- a museum-style frame around a single uploaded poster.
+ * Featured Exhibition
  *
- * The poster itself carries all exhibition information (title, artist,
- * typography, layout), so this section never re-renders that content. It is
- * CMS-ready: it depends only on the poster `src` (and an optional gallery
- * `link`). Swapping the next exhibition means replacing one image -- the
- * layout and the section structure stay untouched. The aspect ratio is
- * derived from the loaded image so any poster ratio keeps the frame intact.
+ * The artwork is the primary visual focus of this section.
+ * Exhibition content remains image-driven so future CMS integration
+ * can replace the artwork source without changing the layout.
  */
 export function FeaturedWork({ exhibition = featuredWork }) {
   const [naturalRatio, setNaturalRatio] = useState(null)
@@ -40,20 +37,25 @@ export function FeaturedWork({ exhibition = featuredWork }) {
   }
 
   const { src, link } = exhibition
-  const ratio = naturalRatio || exhibition.ratio
   const posterSrc = resolveAssetUrl(src)
+  const ratio = naturalRatio || exhibition.ratio || '1356/768'
 
   const poster = (
     <img
       src={posterSrc}
       alt="Featured exhibition poster"
       className="block h-auto w-full"
-      style={ratio ? { aspectRatio: ratio } : undefined}
-      onLoad={(e) => {
-        const n = e.currentTarget
+      style={{
+        aspectRatio: ratio,
+        objectFit: 'contain',
+      }}
+      onLoad={(event) => {
+        const image = event.currentTarget
 
-        if (n.naturalWidth && n.naturalHeight) {
-          setNaturalRatio(`${n.naturalWidth}/${n.naturalHeight}`)
+        if (image.naturalWidth && image.naturalHeight) {
+          setNaturalRatio(
+            `${image.naturalWidth}/${image.naturalHeight}`,
+          )
         }
       }}
       decoding="async"
@@ -61,32 +63,57 @@ export function FeaturedWork({ exhibition = featuredWork }) {
   )
 
   return (
-    <section>
-      <div className="container-editorial">
-        <div className="mb-5">
-          <Eyebrow>The Exhibition</Eyebrow>
+    <section
+      aria-labelledby="featured-exhibition-title"
+      className="relative bg-bg py-16 md:py-20 lg:py-24"
+    >
+      {/* Section introduction */}
+      <Container>
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-8 md:mb-10 lg:mb-12">
+            <Eyebrow>THE EXHIBITION</Eyebrow>
 
-          <p className="mt-2 text-sm text-ink-muted">
-            Featured Piece · Current Season
-          </p>
+            <p
+              id="featured-exhibition-title"
+              className="mt-3 text-sm text-ink-muted md:text-base"
+            >
+              Featured Piece · Current Season
+            </p>
+          </div>
         </div>
-      </div>
+      </Container>
 
-      <Container className="container-poster mt-0.5 pb-3 md:mt-1.5 md:pb-5">
+      {/* Featured artwork */}
+      <div className="mx-auto w-[calc(100%-2rem)] max-w-[1200px] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)]">
         <Reveal>
           {link ? (
             <Link
               to={link}
-              className="block"
+              className="group block"
               aria-label="View the featured exhibition in the gallery"
             >
-              {poster}
+              <div className="overflow-hidden">
+                {poster}
+              </div>
+
+              <div className="mt-5 flex items-center justify-between">
+                <span className="text-sm font-medium text-ink transition-opacity duration-300 group-hover:opacity-60">
+                  View exhibition
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  className="text-sm text-ink transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </div>
             </Link>
           ) : (
             poster
           )}
         </Reveal>
-      </Container>
+      </div>
     </section>
   )
 }

@@ -17,20 +17,26 @@ export function Navbar() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    const onScroll = () => {
-      // Switch to the solid glass state once the hero section
-      // has been passed.
-      setScrolled(window.scrollY > window.innerHeight * 0.75)
-    }
+  const hero = document.getElementById('hero-section')
 
-    onScroll()
+  if (!hero) return
 
-    window.addEventListener('scroll', onScroll, { passive: true })
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      setScrolled(!entry.isIntersecting)
+    },
+    {
+      threshold: 0,
+      rootMargin: '-1px 0px 0px 0px',
+    },
+  )
 
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [])
+  observer.observe(hero)
+
+  return () => {
+    observer.disconnect()
+  }
+}, [])
 
   const workActive = workDropdown.some((item) =>
     pathname.startsWith(item.to),
@@ -44,15 +50,15 @@ export function Navbar() {
           : 'text-ink-muted hover:text-ink hover:after:scale-x-100'
         : isActive
           ? 'text-ink-inverse font-semibold after:scale-x-100'
-          : 'text-ink-inverse-muted hover:text-ink-inverse hover:after:scale-x-100'
+          : 'text-white/80 hover:text-white hover:after:scale-x-100'
     }`
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-all duration-500 ease-[var(--ease-standard)] ${
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ease-[var(--ease-standard)] ${
         scrolled
           ? 'border-border/70 bg-bg/90 shadow-sm backdrop-blur-xl'
-          : 'border-white/15 bg-white/8 backdrop-blur-xl'
+            : 'border-white/20 bg-black/20 backdrop-blur-xl'
       }`}
     >
       <div className="container-editorial flex items-center justify-between py-3">
@@ -97,7 +103,7 @@ export function Navbar() {
                     : 'text-ink-muted hover:text-ink hover:after:scale-x-100'
                   : workActive
                     ? 'text-ink-inverse font-semibold after:scale-x-100'
-                    : 'text-ink-inverse-muted hover:text-ink-inverse hover:after:scale-x-100'
+                      :  'text-white/80 hover:text-white hover:after:scale-x-100'
               }`}
               onClick={() =>
                 setDropdownOpen((prev) => !prev)
